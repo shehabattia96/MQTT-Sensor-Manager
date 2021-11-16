@@ -4,4 +4,4 @@ project( mqtt_sensor_manager VERSION 0.0.1 DESCRIPTION "Listens to sensors on an
 
 set(VCPKG_EXTRN_PATH "${CMAKE_CURRENT_SOURCE_DIR}/externals/vcpkg" CACHE STRING "Path to vcpkg")
 
-add_subdirectory(manager)
+add_subdirectory(Manager)

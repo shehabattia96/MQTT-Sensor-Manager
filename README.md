@@ -1,5 +1,12 @@
 # mqtt_sensor_manager - Listens to sensors on an mqtt server
 
+## About
+
+As an application developer, there is a need for a central processing application that sends and receives data from peripheral units.
+Peripheral units can be hardware units such as sensors, actuators, emitters, controllers (e.g. cameras, microphones, encoders, switches, motor controllers, buzzers, lcd screens), or software programs (e.g. transport (mqtt, rest, uart), photo viewer, video player, file writer).
+The content of the data can be events, states, configurations, images, audio or any information related to the peripheral units.
+The central processing application initializes the units it will use, implements the dispatch handlers the units will call, sets the dispatch handlers to their repective units, then let the units manage communicating with each other using events and dispatch handlers.
+
 ## Getting Started
 
 Run `install.sh -o windows|linux|mac`. To build run `install.sh -b -o windows|linux|mac`.

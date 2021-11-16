@@ -7,5 +7,5 @@ log ""
 log "----------$(date)"
 
 
-"$SCRIPT_DIR/build/Manager_Tests\debug\Manager_Tests" | tee -a $LOG_FILENAME
+"$SCRIPT_DIR/build/manager/test/Debug/Manager_Tests" | tee -a $LOG_FILENAME
 log "Done. $(date)"

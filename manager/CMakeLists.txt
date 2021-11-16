@@ -41,9 +41,9 @@ add_custom_command(TARGET Manager POST_BUILD
 
 #### tests	
 include(CTest)
-if(BUILD_TESTING)
-  add_subdirectory(test)
-endif()
+# if(BUILD_TESTING)
+  add_subdirectory(Test)
+# endif()
 
 
 message("Done building Manager")  
