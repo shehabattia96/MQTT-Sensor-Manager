@@ -6,11 +6,6 @@ project( Manager_Tests C CXX)
 
 get_filename_component( TEST_PATH "${CMAKE_CURRENT_SOURCE_DIR}/" ABSOLUTE )
 
-
-#### Catch2
-find_package(Catch2 CONFIG REQUIRED) # uses vcpkg toolchain
-set(VCPKG_LIBRARIES ${VCPKG_LIBRARIES} Catch2::Catch2)
-
 #### Test sources
 set(
     sources

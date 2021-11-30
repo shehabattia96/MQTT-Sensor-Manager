@@ -1,12 +1,19 @@
+#ifndef UNITINTERFACE_H
+#define UNITINTERFACE_H
+
 #include "stdint.h"
 
-typedef enum EventTypes EventTypes;
+class Unit;
+typedef Unit const * const UnitPtr;
 
-typedef struct {
+struct alignas(16) Event {
     int type;
     uint32_t epoch;
+    UnitPtr parentUnit;
     void* data;
-} Event;
+};
+
+typedef struct Event Event;
 
 typedef Event SubscriptionEvent;
 typedef Event PublisherEvent;
@@ -18,7 +25,8 @@ typedef PublisherEvent const * const PublisherEventPtr;
 typedef void (*EventHandlerCallback)(PublisherEventPtr event);
 typedef void (*EventHandler)(Event, EventHandlerCallback);
 
-class Unit {
+class Unit
+{
     public:
         Unit(EventHandler eventHandler) {
 
@@ -27,6 +35,6 @@ class Unit {
         }
         virtual ~Unit() {}
     
-    private:
-        EventHandler eventHandler;
+        EventHandler eventHandler = nullptr;
 };
+#endif

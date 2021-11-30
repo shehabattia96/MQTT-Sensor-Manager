@@ -1,14 +1,22 @@
-// from https://github.com/cinder/Cinder/blob/master/test/unit/src/TestMain.cpp
-#define CATCH_CONFIG_MAIN
-#include <catch2/catch.hpp>
+#include <iostream>
 
-#ifdef _MSC_VER
+void testEventLoop();
 
-    #include <windows.h> // Provide typedefs for WinMain declaration
+int main() {
+    bool pass = false;
+    
+    try {
 
-    INT WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-        PSTR lpCmdLine, INT nCmdShow) {
-        return Catch::Session().run();
+        testEventLoop();
+
+        pass = true;
+
+    
+    } catch (std::exception& e) {
+        std::cerr << "exception: " << e.what() << std::endl;
     }
 
-#endif
+    std::clog << "Tests " << (pass ? "Passed" : "Failed") << std::endl;
+
+    return pass ? 0 : 1;
+}

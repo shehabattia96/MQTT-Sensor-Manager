@@ -1,3 +1,6 @@
+#ifndef CAMERAINTERFACE_H
+#define CAMERAINTERFACE_H
+
 #include "./UnitInterface.h"
 
 class CameraInterface : public Unit {
@@ -18,3 +21,5 @@ class CameraInterface : public Unit {
     virtual bool setCameraSetting(cameraSettings setting) = 0;
 
 };
+
+#endif
