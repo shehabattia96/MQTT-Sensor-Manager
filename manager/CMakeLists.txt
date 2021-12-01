@@ -31,8 +31,17 @@ set(VCPKG_LIBRARIES
 	)
 
 
-add_executable (Manager main.cpp)
-include_directories(${VCPKG_INCLUDES})
+	file(GLOB unit_sources CONFIGURE_DEPENDS "./Units/*.cpp")
+	file(GLOB unit_headers CONFIGURE_DEPENDS "./Units/*.h")
+
+set(
+    sources
+    ${APP_PATH}/main.cpp
+	# ${unit_sources}
+)
+
+add_executable (Manager ${sources}  )
+include_directories(${VCPKG_INCLUDES} )
 target_link_libraries(Manager LINK_PUBLIC ${VCPKG_LIBRARIES})
 
 #### copy resources directory to build dir:
@@ -41,9 +50,9 @@ add_custom_command(TARGET Manager POST_BUILD
 
 #### tests	
 include(CTest)
-# if(BUILD_TESTING)
+if(BUILD_TESTING)
   add_subdirectory(Test)
-# endif()
+endif()
 
 
 message("Done building Manager")  

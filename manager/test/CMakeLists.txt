@@ -13,7 +13,6 @@ set(
     ${TEST_PATH}/TestEventLoop.cpp
 )
 
-
 add_executable (Manager_Tests ${sources})
 include_directories(${VCPKG_INCLUDES})
 target_link_libraries(Manager_Tests LINK_PUBLIC ${VCPKG_LIBRARIES})
