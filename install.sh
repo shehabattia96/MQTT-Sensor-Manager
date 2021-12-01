@@ -47,6 +47,10 @@ if (($BUILD_ONLY == 0)); then
     log "Running $vcpkg_DIR/vcpkg integrate install"
     "$vcpkg_DIR/vcpkg" integrate install
 
+    # Install openssl
+    log "Running $vcpkg_DIR/vcpkg install openssl:x64-$BUILD_OS"
+    "$vcpkg_DIR/vcpkg" install openssl:x64-$BUILD_OS
+
     # Install paho-mqtt
     log "Running $vcpkg_DIR/vcpkg install paho-mqtt:x64-$BUILD_OS"
     "$vcpkg_DIR/vcpkg" install paho-mqtt:x64-$BUILD_OS

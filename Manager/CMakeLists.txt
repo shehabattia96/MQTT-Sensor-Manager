@@ -18,7 +18,6 @@ else()
     message( FATAL_ERROR "Could not find OpenCV." )
 endif()
 
-
 #### VCPKG include and link list
 set(VCPKG_INCLUDES ${VCPKG_INCLUDES} ${OPENSSL_INCLUDE_DIR} ${PAHO_INCLUDES_DIR})
 set(VCPKG_LIBRARIES 
