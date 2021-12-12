@@ -5,6 +5,6 @@
 
 #include "./StdThreadProvider.h"
 #include "./EventLoop.h"
-// #include "./Mqtt.h"
+#include "./MQTT.h"
 
 #endif

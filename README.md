@@ -14,3 +14,13 @@ Run `install.sh -o windows|linux|mac`. To build run `install.sh -b -o windows|li
 ### VSCode support for toolchain
 
 You'll need the `cmaketools` extension. Scan for kits then search the Pallete for "CMake: Edit Local-User CMake Kits and add `"toolchainFile": "${workspaceFolder}/externals/vcpkg/scripts/buildsystems/vcpkg.cmake"` to your kit. To build the toolchain, you must run `install.sh` at least once, you do not need to run it before each build.
+
+## Dependencies
+
+- [cmake](https://cmake.org/)
+    - On Mac, you should run `sudo "/Applications/CMake.app/Contents/bin/cmake-gui" --install` to install cmake to path after downloading cmake
+- The install script automatically grabs these:
+    - vcpkg
+    - paho-mqtt
+        - openssl is a dependency
+    - opencv
