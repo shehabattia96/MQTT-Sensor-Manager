@@ -11,16 +11,16 @@ class TransportInterface : public Unit {
         TransportInterface(EventHandler eventHandler) : Unit(eventHandler) {}
         virtual ~TransportInterface() {}
         
-        void connect();
-        void disconnect();
+        virtual void connect();
+        virtual void disconnect();
 
-        void onConnect();
-        void onDisconnect();
+        virtual void onConnect();
+        virtual void onDisconnect();
 
-        void publish(char* topic, void* payload, size_t payloadSize);
-        void subscribe(char* topic, void* callback);
+        virtual void publish(char* topic, void* payload, size_t payloadSize);
+        virtual void subscribe(char* topic, void* callback);
 
-        void onReceive(char* topic, void* payload, size_t payloadSize);
+        virtual void onReceive(char* topic, void* payload, size_t payloadSize);
 
     private:
         

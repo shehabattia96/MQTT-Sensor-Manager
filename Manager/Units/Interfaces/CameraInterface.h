@@ -4,21 +4,25 @@
 #include "./UnitInterface.h"
 
 class CameraInterface : public Unit {
-    CameraInterface(){}
-    virtual ~CameraInterface(){}
+    public:
+        CameraInterface(EventHandler eventHandler) : Unit(eventHandler) {}
+        virtual ~CameraInterface(){}
 
-    enum cameraSettings : uint8_t {
+        virtual void powerOn();
+        virtual void powerOff();
+        virtual void getFrame();
 
-    };
+        enum cameraSettings : uint8_t {};
 
-    enum cameraEvents : uint8_t {
-        connected,
-        disconnected,
+        enum cameraEvents : uint8_t {
+            connected,
+            disconnected,
+            
+            frameAvailable
+        };
         
-        frameAvailable
-    };
-    
-    virtual bool setCameraSetting(cameraSettings setting) = 0;
+        virtual bool setCameraSetting(cameraSettings setting) = 0;
+        
 
 };
 
