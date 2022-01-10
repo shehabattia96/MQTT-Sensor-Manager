@@ -25,6 +25,17 @@ void eventLoopEventHandler(Event event, EventHandlerCallback callback) {
             break;
     }
 };
+void mqttEventHandler(Event event, EventHandlerCallback callback) {
+    std::cout << "mqttEventHandler: got event: " << event.type << std::endl;
+
+    switch (currentState) {
+        case ApplicationStates::CONNECT_TO_MQTT:
+            if (event.type)
+            break;
+        case ApplicationStates::DISPLAY_CAMERA_FRAMES:
+            break;
+    }
+};
 
 int main() {
 
@@ -32,6 +43,12 @@ int main() {
 
     // initialize our event loop.
     auto eventLoop = EventLoop(&eventLoopEventHandler);
+
+    
+
+    struct TransportConnectionData mqttConnection {"tcp://localhost:1883", "Manager"};
+    auto mqtt = MQTT(&mqttEventHandler);
+    mqtt.connect(&mqttConnection);
 
     std::string input;
     
@@ -41,6 +58,7 @@ int main() {
     }
 
     std::cout << "Cleaning up and quitting" << std::endl;
+    mqtt.disconnect();
 
     eventLoop.stop();
 

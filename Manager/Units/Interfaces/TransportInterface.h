@@ -1,28 +1,30 @@
 #ifndef TRANSPORTINTERFACE_H
 #define TRANSPORTINTERFACE_H
 
-#include <stdio.h>
-
 #include "./UnitInterface.h"
+
+struct TransportConnectionData {
+    char* host;
+    char* id;
+    char* connectionType;
+};
 
 class TransportInterface : public Unit {
 
     public:
         TransportInterface(EventHandler eventHandler) : Unit(eventHandler) {}
-        virtual ~TransportInterface() {}
+        virtual ~TransportInterface() {};
         
-        virtual void connect();
-        virtual void disconnect();
+        virtual void connect(struct TransportConnectionData* connectionData) = 0;
+        virtual void disconnect() = 0;
 
-        virtual void onConnect();
-        virtual void onDisconnect();
+        virtual void onConnect() = 0;
+        virtual void onDisconnect() = 0;
 
-        virtual void publish(char* topic, void* payload, size_t payloadSize);
-        virtual void subscribe(char* topic, void* callback);
+        virtual void publish(char* topic, void* payload, size_t payloadSize) = 0;
+        virtual void subscribe(char* topic, void* callback) = 0;
 
-        virtual void onReceive(char* topic, void* payload, size_t payloadSize);
+        virtual void onReceive(char* topic, void* payload, size_t payloadSize) = 0;
 
-    private:
-        
 };
 #endif
