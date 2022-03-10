@@ -16,7 +16,10 @@ enum MqttEventTypes {};
 
 void eventLoopEventHandler(Event event, EventHandlerCallback callback) {
     std::cout << "eventLoopEventHandler: got event: " << event.type << std::endl;
-
+    if (event.type == TransportEvents::MESSAGE_RECEIVED) {
+        TransportData* data = (TransportData*)event.data;
+        printf("Message in event loop: %.*s %d\n", data->payloadlen, (char *)data->payload);
+    }
     switch (currentState) {
         case ApplicationStates::CONNECT_TO_MQTT:
             if (event.type)
@@ -25,26 +28,30 @@ void eventLoopEventHandler(Event event, EventHandlerCallback callback) {
             break;
     }
 };
+
+// initialize our event loop.
+auto eventLoop = EventLoop(&eventLoopEventHandler);
+
 void mqttEventHandler(Event event, EventHandlerCallback callback) {
     std::cout << "mqttEventHandler: got event: " << event.type << std::endl;
-
-    switch (currentState) {
-        case ApplicationStates::CONNECT_TO_MQTT:
-            if (event.type)
-            break;
-        case ApplicationStates::DISPLAY_CAMERA_FRAMES:
-            break;
+    if (event.type == TransportEvents::CONNECTED) {
+        ((MQTT*)(event.parentUnit))->subscribe("test");
     }
+    else if (event.type == TransportEvents::MESSAGE_RECEIVED) {
+        TransportData* data = (TransportData*)event.data;
+        printf("Message in event handler: %.*s %d\n", data->payloadlen, (char *)data->payload, data->payloadlen);
+        eventLoop.enqueue(event);
+    }
+};
+
+struct applicationContext {
+    
 };
 
 int main() {
 
     std::cout << "Type exit to quit." << std::endl;
 
-    // initialize our event loop.
-    auto eventLoop = EventLoop(&eventLoopEventHandler);
-
-    
 
     struct TransportConnectionData mqttConnection {"tcp://localhost:1883", "Manager"};
     auto mqtt = MQTT(&mqttEventHandler);

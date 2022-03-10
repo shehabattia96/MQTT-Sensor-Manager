@@ -24,19 +24,20 @@ public:
     void connect(struct TransportConnectionData *connectionData)
     {
         int rc;
+        bool connectFailed = false;
 
         MQTTClient_createOptions options = {{'M', 'Q', 'C', 'O'}, 0, MQTTVERSION_5};
-        if ((rc = MQTTClient_createWithOptions(&client, connectionData->host, connectionData->id,
+        if ((rc = MQTTClient_createWithOptions(&client, connectionData->host, connectionData->clientName,
                                                MQTTCLIENT_PERSISTENCE_NONE, NULL, &options)) != MQTTCLIENT_SUCCESS)
         {
             printf("Failed to create client, return code %d\n", rc);
-            return;
+            return this->onConnectFailed();
         }
 
         if ((rc = MQTTClient_setCallbacks(client, this, &MQTT::defaultConnectionLostCallback, MQTT::defaultMessageCallback, NULL)) != MQTTCLIENT_SUCCESS)
         {
             printf("Failed to set callbacks, return code %d\n", rc);
-            return;
+            return this->onConnectFailed();
         }
 
         MQTTProperties connectProperties = MQTTProperties_initializer;
@@ -49,10 +50,12 @@ public:
         if ((response = MQTTClient_connect5(client, &conn_opts, &connectProperties, &willProperties)).reasonCode != MQTTREASONCODE_SUCCESS)
         {
             printf("Failed to connect, return code %d\n", response.reasonCode);
-            return;
+            
+            return this->onConnectFailed();
         }
 
         std::cout << "Connected to mqtt." << std::endl;
+        this->onConnect();
         return;
     };
 
@@ -65,12 +68,44 @@ public:
         std::cout << "Disconnected from mqtt." << std::endl;
     };
 
-    void onConnect(){};
+    void onConnectFailed() {
+        
+            SubscriptionEvent connectEvent = {
+                TransportEvents::CONNECT_FAIL,
+                0, 
+                this,
+                nullptr
+            };
+
+            this->eventHandler(connectEvent, nullptr);
+
+    }
+
+    void onConnect(){
+        
+        SubscriptionEvent connectEvent = {
+            TransportEvents::CONNECTED,
+            0, 
+            this,
+            nullptr
+        };
+
+        this->eventHandler(connectEvent, nullptr);
+
+    };
     void onDisconnect()
     {
 
         printf("\nConnection lost\n");
-        // printf("     cause: %s\n", cause);
+        
+        SubscriptionEvent subscriptionEvent = {
+            TransportEvents::DISCONNECTED,
+            0, 
+            this,
+            nullptr
+        };
+
+        this->eventHandler(subscriptionEvent, nullptr);
     };
 
     void publish(char *topic, void *payload, size_t payloadSize)
@@ -89,9 +124,8 @@ public:
         }
     };
 
-    void subscribe(char *topic, void *callback)
+    void subscribe(char *topic)
     {
-        mqttCallbackFunction callbackCast = (mqttCallbackFunction)callback;
         MQTTSubscribe_options subscribeOptions = MQTTSubscribe_options_initializer;
         MQTTProperties subscribeProperties = MQTTProperties_initializer;
         MQTTResponse response;
@@ -100,7 +134,6 @@ public:
             printf("Failed to subscribe, return code %d\n", response.reasonCode);
             return;
         }
-        subscriptions[topic] = callbackCast;
     };
 
     void onReceive(char *topic, void *payload, size_t payloadSize){};
@@ -108,26 +141,27 @@ public:
 private:
     MQTTClient client;
 
-    std::map<std::string, mqttCallbackFunction> subscriptions; // all subscribed topics and their callbacks are stored here.
-
     static void defaultConnectionLostCallback(void *context, char *cause)
     {
-        ((MQTT *)context)->onDisconnect();
+        MQTT *mqttContext = (MQTT *)context;
+        mqttContext->onDisconnect();
     };
 
     static int defaultMessageCallback(void *context, char *topicName, int topicLen, MQTTClient_message *message)
     {
         MQTT *mqttContext = (MQTT *)context;
-        if (mqttContext->subscriptions.count(std::string(topicName)) > 0)
-        {
-            mqttContext->subscriptions[topicName](context, topicName, topicLen, message); // call the callback function
-        }
-        else
-        {
-            printf("Message arrived\n");
-            printf("     topic: %s\n", topicName);
-            printf("   message: %.*s\n", message->payloadlen, (char *)message->payload);
-        }
+
+        TransportData data {
+            message->msgid, topicName, topicLen, message->payload, message->payloadlen
+        };
+        
+        SubscriptionEvent subscriptionEvent = {
+            TransportEvents::MESSAGE_RECEIVED,
+            0, 
+            mqttContext,
+            &data
+        };
+        mqttContext->eventHandler(subscriptionEvent, nullptr);
 
         MQTTClient_freeMessage(&message);
         MQTTClient_free(topicName);
